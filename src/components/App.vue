@@ -29,11 +29,12 @@
       </div>
 
       <div class="list no-border platform-delimiter">
+      <q-drawer-link icon="home" :to="{path: '/', exact: true}">Home</q-drawer-link>
       <q-drawer-link icon="person" :to="{path: '/profile', exact: true}">
         Profile
       </q-drawer-link>
-        <q-drawer-link icon="mail" :to="{path: '/', exact: true}">
-          Invites
+        <q-drawer-link icon="mail" :to="{path: '/invites', exact: true}">
+          Invites <span v-if="invites.length > 0" class="floating label bg-dark text-white">{{invites.length}}</span>
         </q-drawer-link>
         <q-drawer-link icon="settings" :to="{path:'/settings', exact:true}">
           Settings
@@ -55,16 +56,38 @@
 
 <script>
 import auth from '../classes/Auth'
+import api from '../classes/Api'
+
 export default {
   data () {
-    return {}
+    return {
+      invites: []
+    }
   },
   methods: {
+    getInvites () {
+      var self = this
+      api.getInvites().then(response => {
+        let data = response[0]
+        let info = []
+        data.forEach(function (value, index, array) {
+          if (value.status === 'pending') {
+            info.push(value)
+          }
+        })
+        self.invites = info
+      }).catch(error => {
+        console.log(error)
+      })
+    },
     logout () {
       console.log('logout has fired')
       auth.logout()
       this.$router.push('/login')
     }
+  },
+  mounted () {
+    this.getInvites()
   }
 }
 </script>

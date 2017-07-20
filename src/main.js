@@ -16,7 +16,7 @@ Vue.use(Quasar) // Install Quasar Framework
 
 router.beforeEach((to, from, next) => {
   auth.checkAuth()
-  if (auth.user.authenticated === false && to.path !== '/login') {
+  if (auth.user.authenticated === false && to.path !== '/login' && to.path !== '/signup') {
     next('/login')
   }
   else {

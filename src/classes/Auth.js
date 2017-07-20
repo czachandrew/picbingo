@@ -4,7 +4,7 @@ import axios from 'axios'
 // define some constants
 // forge url : http://104.236.125.53/api
 
-const API_URL = 'http://sfbapi:8888/api'
+const API_URL = 'http://104.236.125.53/api'
 const LOGIN_URL = API_URL + '/authenticate'
 const SIGNUP_URL = API_URL + '/users'
 const DATA_URL = API_URL + '/users/1'
@@ -43,6 +43,7 @@ export default {
         this.user.name = response.data.name
         this.user.email = response.data.email
         localStorage.setItem('username', response.data.name)
+        localStorage.setItem('userId', response.data.id)
         resolve(response.data)
       }).catch(error => {
         reject(error)
@@ -68,6 +69,8 @@ export default {
   logout () {
     localStorage.removeItem('id')
     localStorage.removeItem('access_token')
+    localStorage.removeItem('userId')
+    localStorage.removeItem('username')
     this.user.authenticated = false
   },
 
@@ -85,6 +88,11 @@ export default {
   getAuthHeader () {
     return {
       'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+    }
+  },
+  getFormAuthHeader () {
+    return {
+      'Authorization': 'Bearer ' + localStorage.getItem('access_token'), 'Content-Type': 'multipart/form-data', 'Accept': 'application/json, text/plain, */*'
     }
   }
 

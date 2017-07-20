@@ -26,12 +26,12 @@ export default new VueRouter({
       children: [
         { path: '', component: load('Home') },
         { path: '/lobby/:gameId', component: load('Lobby'), props: true },
-        { path: '/lobby/:gameId/:cardId', component: load('Card'), props: true }
+        { path: '/lobby/:gameId/:cardId', component: load('Card'), props: true },
+        { path: '/settings', component: load('Settings') },
+        { path: '/invites', component: load('InviteLobby') }
       ] }, // Default
     { path: '*', component: load('Error404') }, // Not found
-    { path: '/card', component: load('Card') },
     { path: '/login', component: load('Login') },
-    { path: '/signup', component: load('Signup') },
-    { path: '/lobby/:gameId', component: load('Lobby'), props: true }
+    { path: '/signup', component: load('Signup') }
   ]
 })

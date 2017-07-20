@@ -39,6 +39,7 @@
     <q-modal ref="basicModal">
     <div class="card-title">
       <div class="title">Create a new game</div>
+      </div>
       <div class="card-content">
       <form>
       <div class="form-group">
@@ -72,7 +73,7 @@
         
         </form>
       </div>
-    </div>  
+     
     </q-modal>
   </div>
 </template>
@@ -87,13 +88,14 @@ export default {
       username: localStorage.getItem('username'),
       cardList: [],
       games: [],
+      invites: [],
       newGameObj: {
         title: '',
         public: false,
         maxPlayers: 10,
         type: [],
-        group: []
-
+        group: [],
+        group_friendly_name: ''
       },
       typeOptions: [
         {
@@ -106,6 +108,12 @@ export default {
         }
       ],
       groupOptions: []
+    }
+  },
+  watch: {
+    newGameObj: function (val) {
+      console.log('watcher')
+      console.log(val)
     }
   },
   methods: {
@@ -122,6 +130,9 @@ export default {
       // get all the votes that you are required to make
       // you cannot vote for yourself
     },
+    setFriendly () {
+
+    },
     updateGameTypes () {
       api.getGameTypes().then(response => {
         console.log(response)
@@ -132,11 +143,29 @@ export default {
         console.log(error)
       })
     },
+    getInvites () {
+      api.getInvites().then(response => {
+        console.log(response)
+        this.invites = response.data
+      }).catch(error => {
+        console.log(error)
+      })
+    },
     createGame () {
+      console.log(this.newGameObj)
+      var self = this
+      // let's go ahead and get the value for game type
+      this.groupOptions.forEach(function (val) {
+        // console.log(val.label)
+        if (val.value === self.newGameObj.group) {
+          self.newGameObj.group_friendly_name = val.label
+        }
+      })
       api.createGame(this.newGameObj).then(response => {
         console.log(response)
         this.games.push(response)
         this.$refs.basicModal.close()
+        this.$router.push('/lobby/' + response.success.data.id)
       }).catch(error => {
         console.log(error)
       })

@@ -18,6 +18,7 @@
       <div class="error" ng-show="hasError">
         <p>{{error}}</p>
       </div>
+      <router-link to="/signup">Create an account</router-link>
     </div>
   </div>
 </template>
@@ -43,6 +44,7 @@ export default {
     login () {
       let creds = { email: this.username, password: this.password }
       auth.login(this, creds).then(response => {
+        // alert(response)
         this.$router.push('/')
       }).catch(error => {
         // alert(error)
