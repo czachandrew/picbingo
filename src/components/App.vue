@@ -39,6 +39,9 @@
         <q-drawer-link icon="settings" :to="{path:'/settings', exact:true}">
           Settings
         </q-drawer-link>
+        <q-drawer-link icon="mail" :to="{path: '/voter', exact:true}">
+          Votes <span v-if="voteCount > 0" class="circular label bg-primary text-white">{{voteCount}}</span>
+        </q-drawer-link>
         <q-drawer-link icon="forward" :to="{path:'/logout', exact:true}">
         Logout
         </q-drawer-link>
@@ -57,11 +60,18 @@
 <script>
 import auth from '../classes/Auth'
 import api from '../classes/Api'
+import Pusher from 'pusher-js'
+import {Toast} from 'quasar'
 
 export default {
   data () {
     return {
-      invites: []
+      invites: [],
+      votes: [],
+      voteCount: 1,
+      inviteCount: 0,
+      user: {},
+      messages: []
     }
   },
   methods: {
@@ -84,10 +94,31 @@ export default {
       console.log('logout has fired')
       auth.logout()
       this.$router.push('/login')
+    },
+    subscribe () {
+      let config = {}
+      config.cluster = 'us2'
+      const socket = new Pusher('b4c9595e51f519deafc7', config)
+      socket.subscribe(localStorage.getItem('username') + localStorage.getItem('userId'))
+      socket.bind('App\\Events\\ReadyToVote', data => {
+        console.log(data)
+        // create and alert
+        Toast.create.positive({ html: 'It\'s time to vote on ' + data.challengeTitle + ' in your game of ' + data.gameName })
+        // update the vote count by 1
+        this.voteCount++
+      })
+      socket.bind('App\\Events\\InvitedToGame', data => {
+        Toast.create.positive({ html: 'Somone just invited you to play a game of ' + data.type })
+        this.inviteCount++
+      })
     }
   },
   mounted () {
     this.getInvites()
+    // this.subscribe()
+  },
+  created () {
+    this.subscribe()
   }
 }
 </script>

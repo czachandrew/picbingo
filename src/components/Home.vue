@@ -80,7 +80,8 @@
 
 <script>
 import api from '../classes/Api'
-import {LocalStorage} from 'quasar'
+import Pusher from 'pusher-js'
+import {LocalStorage, Toast} from 'quasar'
 
 export default {
   data () {
@@ -170,6 +171,18 @@ export default {
         console.log(error)
       })
     },
+    subscribe () {
+      console.log('Subscribe has fired')
+      let config = {}
+      config.cluster = 'us2'
+      const socket = new Pusher('b4c9595e51f519deafc7', config)
+      socket.subscribe('votes')
+      socket.bind('App\\Events\\ReadyToVote', data => {
+        console.log(data)
+        // alert('fuck')
+        Toast.create.positive({ html: 'Yo vote something' })
+      })
+    },
     newGame () {
       // title the game
       this.$refs.basicModal.open()
@@ -188,6 +201,11 @@ export default {
     // set off the initial call to fetch the data
     this.getGames()
     this.updateGameTypes()
+    // this.subscribe()
+  },
+  created () {
+    console.log('created')
+    // this.subscribe()
   }
 }
 </script>

@@ -35,9 +35,10 @@ export default {
   },
   getUserData () {
     return new Promise((resolve, reject) => {
-      let userId = localStorage.get('userId')
+      let userId = localStorage.getItem('userId')
+      // console.log(userId)
       axios.get(USERS_URL + '/' + userId, HEADERS).then(response => {
-        console.log(response)
+        // console.log(response)
         resolve(response.data)
       }).catch(error => {
         reject(error.data)
@@ -211,7 +212,7 @@ export default {
     let formData = new FormData()
     formData.append('file', photo)
     return new Promise((resolve, reject) => {
-      axios.post('USERS_URL' + '/addProfilePic', formData, FILE_HEADERS).then(response => {
+      axios.post(USERS_URL + '/addProfilePic', formData, FILE_HEADERS).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error.data)

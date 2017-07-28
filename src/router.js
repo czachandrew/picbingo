@@ -28,7 +28,8 @@ export default new VueRouter({
         { path: '/lobby/:gameId', component: load('Lobby'), props: true },
         { path: '/lobby/:gameId/:cardId', component: load('Card'), props: true },
         { path: '/settings', component: load('Settings') },
-        { path: '/invites', component: load('InviteLobby') }
+        { path: '/invites', component: load('InviteLobby') },
+        { path: '/voter', component: load('Voter') }
       ] }, // Default
     { path: '*', component: load('Error404') }, // Not found
     { path: '/login', component: load('Login') },

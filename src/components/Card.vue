@@ -5,8 +5,6 @@
       {{card.game.name}}
       <button class="primary" @click="goToLobby()">Return to Lobby</button>
       
-      {{pictureStuff}}
-      
     </div>
   </div>
     <div class="row" style="width: 900px;">

@@ -5,6 +5,7 @@
 <div class="card-content">
   Add Players: <q-autocomplete v-model="terms" @search="search" @selected="addPlayer"></q-autocomplete>
   <button class="primary" @click="openInviteModal()">Invite Someone</button>
+  <button class="red" @click="$refs.confirmModal.open()">Approvals</button>
 </div>
    
 </div>
@@ -39,14 +40,8 @@
   <div v-if="game.status == 'active'">
   <h2>{{game.name}}</h2>
     <button class="primary raised" @click="openCard(myCard.id)">My Card</button>
-    <button class="primary raised">Votes</button>
-    <button class="primary raised">Approvals</button>
-    <h3>Recently Viewed Challenges</h3>
-      <ul>
-      <li>Challenge 1</li>
-      <li>Challenge 2</li>
-      </ul>
-        This is an active game access your cards, votes, or approvals
+    <button class="primary raised" @click="goToVotes(game.id)">Votes</button>
+    <button class="primary raised" @click="$refs.confirmModal.open()">Approvals</button>
         
   </div>
   <invite-list :gameId="gameId"></invite-list>
@@ -65,12 +60,23 @@
     </div>
   </div>
   </q-modal>
+  <q-modal ref="confirmModal" >
+    
+      <approval v-on:approvalClose="$refs.confirmModal.close()"></approval>
+    
+
+  </q-modal>
+  <q-modal ref="voteModal">
+      <vote-modal v-on:approvalClose="$refs.voteModal.close()" :vote-id="gameId" ></vote-modal>
+  </q-modal>
   </div>
 </template>
 
 <script>
 import api from '../classes/Api.js'
 import InviteList from './InviteList.vue'
+import Approval from './Approval'
+import VoteModal from './VoteModal'
 export default {
   props: ['gameId'],
   data () {
@@ -82,6 +88,7 @@ export default {
       invites: [],
       myCard: {},
       terms: '',
+      voteModalId: '',
       length: '',
       inviteName: '',
       inviteEmail: '',
@@ -89,11 +96,19 @@ export default {
         { label: '24 Hours', value: 1 },
         { label: '48 Hours', value: 2 },
         { label: '72 Hours', value: 3 }
-      ]
+      ],
+      approvls: [],
+      activeApproval: {
+        title: '',
+        description: '',
+        image: ''
+      }
     }
   },
   components: {
-    InviteList
+    InviteList,
+    Approval,
+    VoteModal
   },
   methods: {
     openInviteModal () {
@@ -145,6 +160,7 @@ export default {
     },
     goToVotes () {
       // starts your voting requirements for this game only
+      this.$refs.voteModal.open()
     },
     approvals () {
       // launches your approval requirements for this game only
